@@ -179,7 +179,7 @@ Enter translation type: [auto]
 
 参考资料:
 
-[参考博文[1]]([http://imushan.com/2018/07/11/os/Bochs%E5%AD%A6%E4%B9%A0-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E7%AF%87/](http://imushan.com/2018/07/11/os/Bochs学习-安装配置篇/))
+参考资料1:http://imushan.com/2018/07/11/os/Bochs%E5%AD%A6%E4%B9%A0-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E7%AF%87/
 
 [参考资料[2]](https://www.it610.com/article/5523805.htm)
 
