@@ -177,6 +177,14 @@ Enter translation type: [auto]
   在2.3.5中的BIOS-bochs-latest更新了，变成了128k的，这个时候配置需要改为
   romimage: file=$BXSHARE/BIOS-bochs-latest
 
+Nasm 编译:
+
+`nasm -Iinclude/  -o loader.bin loader.S `
+
+dd写入虚拟硬盘:
+
+`dd if=/Users/lonekriss/Desktop/mememe/操作系统/mbr/loader.bin  of=/Users/lonekriss/hd60m.img bs=512 count=1 seek=2 conv=notrunc`
+
 参考资料:
 
 参考资料1:http://imushan.com/2018/07/11/os/Bochs%E5%AD%A6%E4%B9%A0-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E7%AF%87/
