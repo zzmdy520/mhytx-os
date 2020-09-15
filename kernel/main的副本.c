@@ -12,6 +12,6 @@ put_char('v');
 put_char('1');
 put_char('.');
 put_char('0');
-put_str("\n put_str done!");
+put_str("/n put_str done!");
 while(1);
 }
