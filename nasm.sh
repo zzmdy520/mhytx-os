@@ -1,0 +1,1 @@
+nasm -I lib/include -f elf -o lib/kernel/print.o lib/kernel/print.S

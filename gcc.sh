@@ -1,0 +1,1 @@
+gcc -O1 -c -I lib/kernel -o kernel/main.o kernel/main.c

@@ -1,0 +1,1 @@
+ld -no-pie -Ttext 0xc00015000 -e main -o kernel.bin kernel/main.o lib/kernel/print.o
