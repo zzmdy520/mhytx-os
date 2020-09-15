@@ -1,5 +1,10 @@
 %include "kernel.inc"
 [bits 32]
+SECTION .data
+
+prefix_16 db '0x',0
+put_int_buffer dq 0
+
 SECTION .text
 ;===========put_char======================
 ;功能描述:把栈中的一个字符打印到屏幕光标处
@@ -7,6 +12,7 @@ SECTION .text
 ;=========================================
 global put_char ;声明全局函数
 global put_str
+global put_int
 put_char:
 
 pushad ;push all double
@@ -19,7 +25,7 @@ mov al,0x0e
 out dx,al
 mov dx,0x3d5
 in al,dx
-mov al,ah
+mov ah,al
 
 ;read low 8bits
 mov dx,0x3d4
@@ -139,5 +145,70 @@ put_str:
     
 .str_over:
     pop ecx
-    pop edx 
+    pop ebx 
     ret
+
+;--------------------
+;输出数字
+;输入:栈中待打印数字
+
+;-------------------
+put_int:
+    pushad
+    mov ebp, esp
+    mov eax, [ebp + 4 * 9]
+    mov edx, eax
+    mov edi, 7
+    mov ecx, 8
+    mov ebx, put_int_buffer
+
+.16based_4bits:
+    and edx, 0x0000000F
+    cmp edx, 9
+    jg .is_A2F
+    add edx, '0'
+    jmp .store
+
+.is_A2F:
+    sub edx, 10
+    add edx, 'A'
+
+.store:
+    mov [ebx + edi], dl
+    dec edi
+    shr eax, 4
+    mov edx, eax
+    loop .16based_4bits
+
+.ready_print:
+    inc edi
+
+.skip_prefix_0:
+    cmp edi, 8
+    je .full0
+
+.go_on_skip:
+    mov cl, [put_int_buffer + edi]
+    inc edi
+    cmp cl, '0'
+    je .skip_prefix_0
+    dec edi
+
+    push prefix_16
+    call put_str
+    add esp,4
+    jmp .put_each_num
+
+.full0:
+    mov cl, '0'
+.put_each_num:
+    push ecx
+    call put_char
+    add esp, 4
+    inc edi
+    mov cl, [put_int_buffer + edi]
+    cmp edi, 8
+    jl .put_each_num
+    popad
+    ret
+

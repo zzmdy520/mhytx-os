@@ -12,6 +12,10 @@ put_char('v');
 put_char('1');
 put_char('.');
 put_char('0');
-put_str("\n put_str done!");
+put_char('\n');
+put_str("put_str done v5!\n");
+put_int(0);
+put_char('\n');
+put_int(0xabcd1234);
 while(1);
 }

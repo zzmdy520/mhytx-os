@@ -251,3 +251,5 @@ https://github.com/cfenollosa/os-tutorial/issues/45
 `ld -no-pie -Ttext 0xc00015000 -e main -o kernel.bin kernel/main.o lib/print.o`
 
 no-pie :该标志告诉gcc不要制作位置无关的可执行文件（PIE）。 PIE是启用地址空间布局随机化（ASLR）的前提。 ASLR是一项安全功能，内核在每次运行时都会将二进制文件和依赖项加载到虚拟内存的随机位置。
+
+![image-20200915194410063](/Users/lonekriss/Library/Application Support/typora-user-images/image-20200915194410063.png)
