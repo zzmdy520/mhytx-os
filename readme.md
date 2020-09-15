@@ -177,17 +177,77 @@ Enter translation type: [auto]
   在2.3.5中的BIOS-bochs-latest更新了，变成了128k的，这个时候配置需要改为
   romimage: file=$BXSHARE/BIOS-bochs-latest
 
-Nasm 编译:
-
-`nasm -Iinclude/  -o loader.bin loader.S `
-
-dd写入虚拟硬盘:
-
-`dd if=/Users/lonekriss/Desktop/mememe/操作系统/mbr/loader.bin  of=/Users/lonekriss/hd60m.img bs=512 count=1 seek=2 conv=notrunc`
-
 参考资料:
 
-参考资料1:http://imushan.com/2018/07/11/os/Bochs%E5%AD%A6%E4%B9%A0-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E7%AF%87/
+[参考博文[1]]([http://imushan.com/2018/07/11/os/Bochs%E5%AD%A6%E4%B9%A0-%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E7%AF%87/](http://imushan.com/2018/07/11/os/Bochs学习-安装配置篇/))
 
 [参考资料[2]](https://www.it610.com/article/5523805.htm)
 
+
+
+## mac交叉汇编:
+
+gmp/mpfr/mpc从官网下载最新版(我的brew有点问题,fucking Wall）
+
+参考此网站https://www.cnblogs.com/Hxinguan/p/5016305.html安装配置。
+
+gcc可以用brew install gcc来安装
+
+
+
+```
+export CC=/usr/local/bin/gcc-9
+export LD=/usr/local/bin/gcc-9
+#我brew安装的gcc版本是9
+```
+
+安装binutils
+
+需要指定host type：
+
+`host=i386-pc-linux-gnu`
+
+
+
+```
+../binutils-2.9.1/configure --target=$TARGET --enable-interwork --enable-multilib --disable-nls --disable-werror --host=i386-unknown-linux-gnu --prefix=$PREFIX 2>&1 | tee configure.log make all install 2>&1 | tee make.log
+```
+
+
+
+gcc安装:
+
+``
+
+```
+./configure --prefix=$PREFIX \
+--target=$TARGET \
+--disable-nls \
+--enable-languages=c,c++ --without-headers \
+--enable-interwork --enable-multilib \
+--with-gmp=/usr/local/Cellar/gmp/6.2.0 --with-mpc=/usr/local/Cellar/mpc --with-mpfr=/usr/local/Cellar/mpfr
+```
+
+参考:https://blog.csdn.net/hebbely/article/details/53993141
+
+https://github.com/cfenollosa/os-tutorial/tree/master/11-kernel-crosscompiler
+
+https://github.com/cfenollosa/os-tutorial/issues/45
+
+--------
+
+## 第六章的坑:
+
+我的ubuntu环境中,gcc8.按照书中ld链接,可以看到多了不少phead。
+
+![image-20200915110738704](https://tva1.sinaimg.cn/large/007S8ZIlgy1gir5qwxnpyj310u0m645t.jpg)
+
+之后mem_cpy时会出错。
+
+原因可能就是有些虚拟地址是在3g内存以下，目前页目录并没有相应的映射。所以出错。
+
+一番google使用如下指令,在目前学习的第六章中没有出错。
+
+`ld -no-pie -Ttext 0xc00015000 -e main -o kernel.bin kernel/main.o lib/print.o`
+
+no-pie :该标志告诉gcc不要制作位置无关的可执行文件（PIE）。 PIE是启用地址空间布局随机化（ASLR）的前提。 ASLR是一项安全功能，内核在每次运行时都会将二进制文件和依赖项加载到虚拟内存的随机位置。

@@ -1,9 +1,14 @@
 %include "boot.inc"
 
 SECTION MBR vstart=0x7c00
+mov ax,cs
+mov ds,cx
+mov es,ax
+mov ss,ax
+mov fs,ax
 mov sp,0x7c00
 mov ax,0xb800
-mov es,ax
+mov gs,ax
 
 ;int 0x10 功能号 0x06 功能:上卷窗口
 mov ax,0600h
@@ -11,20 +16,20 @@ mov bx,0700h
 mov dx,184fh
 int 10h
 ;输出信息
-mov byte [es:0x00],'m'
-mov byte [es:0x01],0x8d
-mov byte [es:0x02],'y'
-mov byte [es:0x03],0x8d
-mov byte [es:0x04],'m'
-mov byte [es:0x05],0x8d
-mov byte [es:0x06],'b'
-mov byte [es:0x07],0x8d
-mov byte [es:0x08],'r'
-mov byte [es:0x0a],0x8d
+mov byte [gs:0x00],'m'
+mov byte [gs:0x01],0x8d
+mov byte [gs:0x02],'y'
+mov byte [gs:0x03],0x8d
+mov byte [gs:0x04],'m'
+mov byte [gs:0x05],0x8d
+mov byte [gs:0x06],'b'
+mov byte [gs:0x07],0x8d
+mov byte [gs:0x08],'r'
+mov byte [gs:0x0a],0x8d
 
 mov eax,LOADER_START_SECTOR ;起始扇区lba地址
 mov bx,LOADER_BASE_ADDR	    ;写入的内存地址
-mov cx,1		    ;写入扇区数
+mov cx,4		    ;写入扇区数
 call rd_disk_m_16
 
 jmp LOADER_BASE_ADDR        ;跳转到加载器
