@@ -17,6 +17,9 @@ put_int(0);
 put_char('\n');
 put_int(0xabcd1234);
 init_all();
+put_str("before!\n");
 asm volatile("sti");
+put_str("after!\n");
+
 while(1);
 }

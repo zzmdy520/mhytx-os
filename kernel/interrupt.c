@@ -19,24 +19,24 @@ uint16_t func_offset_high_word;
 };
 
 static struct gate_desc idt[IDT_DESC_CNT];
-static void make_idt_desc(struct gate_desc* p_gdesc,uint16_t attr,void* function);
+static void make_idt_desc(struct gate_desc* p_gdesc,uint8_t attr,void* function);
 extern void* intr_entry_table[IDT_DESC_CNT];
 void* idt_table[IDT_DESC_CNT];
 char* intr_name[IDT_DESC_CNT];
 
 //通用函数中断处理函数
 static void general_init_handler(uint8_t vec_num){
-    if(vec_num == 0x27 || vec_num == 0x2f) return;
+    if(vec_num == 0x27 || vec_num == 0x2f) {return;}
     put_str("int vector:");
-    put_inr(vec_num);
-    pur_char('\n');
+    put_int(vec_num);
+    put_char('\n');
 }
 
 //完成一般中断处理函数注册及异常名称注册
 static void exception_init(void){
-    int i = 0;
-    for(i;i < IDT_DESC_CNT;i++){
-         idt_table[i] = general_init_handler;//先全部指向第一个函数，因为其他的还没实现
+    int i ;
+    for(i = 0;i < IDT_DESC_CNT;i++){
+         idt_table[i] = general_init_handler;//先全部指向默认函数，因为其他的还没实现
          intr_name[i] = "unknow";
     }
     //0～19是处理器内部固定异常，20～31系统保留
@@ -59,9 +59,11 @@ static void exception_init(void){
     intr_name[17] = "#AC Alignment Check Exception";
     intr_name[18] = "#MC Machine-Check Exception";
     intr_name[19] = "#XF SIMD Floating-Point Exception";
+    put_str(" exception_init done \n");
+    
 }
 //写入中断调用门
-static void make_idt_desc(struct gate_desc* p_gdesc,uint16_t attr,void* function){
+static void make_idt_desc(struct gate_desc* p_gdesc,uint8_t attr,void* function){
     p_gdesc->func_offset_low_word = (uint32_t)function & 0x0000ffff;
     p_gdesc->selector = SELECTOR_K_CODE;
     p_gdesc->fixed = 0;
@@ -73,7 +75,8 @@ static void make_idt_desc(struct gate_desc* p_gdesc,uint16_t attr,void* function
 static void idt_desc_init(void){
     int i;
     for(i  = 0; i < IDT_DESC_CNT;i++){
-        make_idt_desc(& idt[i], IDT_DESC_ATTR_DPL0,intr_entry_table[i]);
+        
+        make_idt_desc(&idt[i], IDT_DESC_ATTR_DPL0,intr_entry_table[i]);
     }
     put_str(" idt_desc_init done \n");
 }
@@ -102,6 +105,7 @@ static void pic_init(void) {
 void idt_init(void){
     put_str("idt_init start \n");
     idt_desc_init();//中断门描述符表初始化
+    exception_init();
     pic_init();
 
    //加载idt
