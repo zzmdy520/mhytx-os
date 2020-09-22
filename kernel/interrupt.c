@@ -2,13 +2,16 @@
 #include "global.h"
 #include "print.h"
 #include "io.hpp"
- 
+#include "interrupt.h"
+
 
 #define IDT_DESC_CNT 0X21 //目前支持的中断数
 #define PIC_M_CTRL 0X20
 #define PIC_M_DATA 0X21
 #define PIC_S_CTRL 0Xa0
 #define PIC_S_DATA 0xa1
+#define EFLAGS_IF 0X00000200
+
 
 struct gate_desc{
 uint16_t func_offset_low_word;
@@ -111,7 +114,57 @@ void idt_init(void){
    //加载idt
     
 uint64_t idt_operand =(sizeof(idt)-1) |( (uint64_t)(uint32_t)idt <<16);
-asm volatile("lidt %0" : :"m" (idt_operand));
-put_str("idt_init done");
+    asm volatile("lidt %0" : :"m" (idt_operand));
+    put_str("idt_init done");
 }
+
+
+/*
+ 输入：无
+ 函数功能：获得中断状态
+ 输出:返回中断状态
+ */
+enum intr_status intr_get_status(){
+    uint32_t eflags;
+    asm volatile("pushfl;popl %0":"=g" (eflags)) ;
+    return (EFLAGS_IF & eflags)?INTR_ON:INTR_OFF;
+}
+
+/*
+ 输入：无
+ 函数功能：开中断并返回之前中断状态
+ 输出:返回之前中断状态
+ */
+
+enum intr_status intr_enable(){
+    enum intr_status old_status;
+    if(INTR_ON == intr_get_status()){
+        old_status = INTR_ON;
+        return old_status;
+    }
+    else{
+        old_status  = INTR_OFF;
+        asm volatile("sti");
+        return old_status;
+    }
+}
+
+enum intr_status intr_disable(){
+    enum intr_status old_status;
+    if(INTR_ON == intr_get_status()){
+        asm volatile("cli");
+        old_status = INTR_ON;
+        return old_status;
+    }
+    else{
+        old_status  = INTR_OFF;
+        return old_status;
+    }
+}
+
+//将中断设置为status
+enum intr_status intr_set_status(enum intr_status status){
+    return status & INTR_ON ? intr_enable():intr_disable();
+}
+
 
