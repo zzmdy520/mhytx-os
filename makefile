@@ -1,5 +1,5 @@
 BUILD_DIR = ./build
-ENTRY_POINT = 0xc0001500
+ENTRY_POINT = 0xc0015000
 AS = nasm 
 CC = gcc
 LD = ld
@@ -7,8 +7,10 @@ LIB = -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/
 ASFLAGS = -f elf
 CFLAGS = -Wall $(LIB) -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes 
 LDFLAGS = -no-pie -Ttext $(ENTRY_POINT) -e main -Map $(BUILD_DIR)/kernel.map
-OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o #$(BUILD_DIR)/debug.o
+OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o  $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o $(BUILD_DIR)/string.o
 
+
+ #$(BUILD_DIR)/debug.o
 .PHONY: mk_dir hd clean gccjob nasmjob ld
 
 
@@ -25,7 +27,15 @@ $(BUILD_DIR)/interrupt.o: kernel/interrupt.c kernel/interrupt.h lib/stdint.h ker
 $(BUILD_DIR)/timer.o: device/timer.c device/timer.h lib/stdint.h kernel/io.hpp lib/kernel/print.h
 	$(CC) $(CFLAGS) $< -o $@
 
-#$(BUILD_DIR)/debug.o: kernel/debug.c kernel/debug.h lib/kernel/print.h lib/stdint.h kern#el/interrupt.h
+$(BUILD_DIR)/string.o:lib/string.c lib/string.h kernel/global.h lib/stdint.h
+	$(CC) $(CFLAGS) $< -o $@
+#$(BUILD_DIR)/debug.o: kernel/debug.c kernel/debug.h lib/kernel/print.h lib/stdint.h kern#el/interrupt
+
+$(BUILD_DIR)/bitmap.o: lib/kernel/bitmap.c lib/kernel/bitmap.o lib/stdint.h kernel/global.h lib/string.h lib/kernel/print.h
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD_DIR)/memory.o: kernel/memory.c kernel/memory.h lib/kernel/print.h lib/stdint.h lib/kernel/bitmap.h
+	$(CC) $(CFLAGS) $< -o $@
 #	$(CC) $(CFLAGS) $< -o $@
 
 # 编译loader和mbr
@@ -56,7 +66,7 @@ clean:
 	cd $(BUILD_DIR) && rm -f ./*
 
 
-gccjob: $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o
+gccjob: $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/string.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o
 
 nasmjob:$(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o
 

@@ -13,12 +13,12 @@ put_char('.');
 put_char('0');
 put_char('\n');
 put_str("put_str done v5!\n");
-put_int(0);
 put_char('\n');
 put_int(0xabcd1234);
+//asm volatile("cli");
 init_all();
 put_str("before!\n");
-asm volatile("sti");
+//asm volatile("sti");
 put_str("after!\n");
 
 while(1);

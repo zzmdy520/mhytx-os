@@ -1,1 +1,0 @@
-dd if=/Users/lonekriss/Documents/mhytx-os/kernel.bin of=/Users/lonekriss/hd60m.img bs=512 count=200 seek=9 conv=notrunc
