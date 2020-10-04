@@ -34,7 +34,7 @@ $(BUILD_DIR)/string.o:lib/string.c lib/string.h kernel/global.h lib/stdint.h
 $(BUILD_DIR)/bitmap.o: lib/kernel/bitmap.c lib/kernel/bitmap.o lib/stdint.h kernel/global.h lib/string.h lib/kernel/print.h
 	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/memory.o: kernel/memory.c kernel/memory.h lib/kernel/print.h lib/stdint.h lib/kernel/bitmap.h
+$(BUILD_DIR)/memory.o: kernel/memory.c kernel/memory.h lib/kernel/print.h lib/stdint.h lib/kernel/bitmap.h lib/string.h
 	$(CC) $(CFLAGS) $< -o $@
 #	$(CC) $(CFLAGS) $< -o $@
 

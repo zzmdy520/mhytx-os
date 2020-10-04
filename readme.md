@@ -253,3 +253,18 @@ https://github.com/cfenollosa/os-tutorial/issues/45
 no-pie :该标志告诉gcc不要制作位置无关的可执行文件（PIE）。 PIE是启用地址空间布局随机化（ASLR）的前提。 ASLR是一项安全功能，内核在每次运行时都会将二进制文件和依赖项加载到虚拟内存的随机位置。
 
 ![image-20200915194410063](https://tva1.sinaimg.cn/large/007S8ZIlgy1girkx3d6qzj31400q8q4w.jpg)
+
+---
+
+## 内存管理:
+
+![image-20201003152537688](https://tva1.sinaimg.cn/large/007S8ZIlgy1gjc6d4escyj31400q8god.jpg)
+
+敲错一个字，调bug一下午。注意括号。
+
+返回的pde错误。
+
+![image-20201003163530280](https://tva1.sinaimg.cn/large/007S8ZIlgy1gjc8djywwsj30uy0akta0.jpg)
+
+![image-20201003163614554](https://tva1.sinaimg.cn/large/007S8ZIlgy1gjc8ejhs09j31zj0u0b22.jpg)
+

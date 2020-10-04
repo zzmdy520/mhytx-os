@@ -73,7 +73,7 @@ int bitmap_scan(struct bitmap* bitmap, uint32_t cnt) {
 void bitmap_set(struct bitmap* btmap, uint32_t index, uint8_t value) {
 
     uint32_t byte_index = index / 8;
-    uint32_t bit_odd = byte_index % 8;
+    uint32_t bit_odd = index % 8;
 
     if (value) {
         btmap->bits[byte_index] |= (BITMAP_MASK << bit_odd);
