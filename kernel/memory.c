@@ -27,7 +27,7 @@ struct pool kernel_pool,usr_pool;
 struct virtual_addr kernel_vaddr;//此结构用来给内核分配虚拟地址
 
 static void mem_pool_init(uint32_t all_mem){
-    put_str(" mem_pool_init_start\n");
+    //put_str(" mem_pool_init_start\n");
     uint32_t page_table_size = PG_SIZE * 256 ;//共256个页框
 
     uint32_t used_mem = page_table_size + 0x100000;
@@ -116,18 +116,18 @@ uint32_t* pde_ptr(uint32_t vaddr){
 
 static void* palloc(struct pool* m_pool){
     int bit_idx = bitmap_scan(&m_pool->pool_bitmap,1);
-    put_str("\n palloc bit_idx:");
-    put_int((uint32_t)bit_idx);
-    put_char('\n');
+   // put_str("\n palloc bit_idx:");
+    //put_int((uint32_t)bit_idx);
+   // put_char('\n');
 
     if(bit_idx == -1) return NULL;
 
     bitmap_set(&m_pool->pool_bitmap, bit_idx , 1);
     
     uint32_t page_phyaddr = (bit_idx * PG_SIZE) + m_pool->phy_addr_start;
-    put_str("\n palloc page phyaddr:");
-    put_int((uint32_t)page_phyaddr);
-    put_char('\n');
+    //put_str("\n palloc page phyaddr:");
+   // put_int((uint32_t)page_phyaddr);
+   // put_char('\n');
      
 
     return (void*)page_phyaddr;
@@ -138,15 +138,15 @@ static void page_table_add(void* _vaddr, void* _page_phyaddr){
     uint32_t vaddr = _vaddr, page_phyaddr = (uint32_t*) _page_phyaddr;
     uint32_t *pde = pde_ptr(vaddr);
     uint32_t *pte = pte_ptr(vaddr);
-    put_str("pte:");
-    put_int((uint32_t*)pte);
-    put_char('\n');
+    //put_str("pte:");
+    //put_int((uint32_t*)pte);
+    //put_char('\n');
     if(*pde & 0x00000001){
         if((*pte & 0x00000001) == 0){
-            put_str("pte set\n");
+            //put_str("pte set\n");
             *pte = page_phyaddr | PG_US_U | PG_RW_W | PG_P_1;
         }else{
-            put_str("pte repeat\n");
+            //put_str("pte repeat\n");
             *pte = page_phyaddr | PG_US_U | PG_RW_W | PG_P_1;
         }
     }else{
@@ -154,7 +154,7 @@ static void page_table_add(void* _vaddr, void* _page_phyaddr){
         *pde = pde_phyaddr | PG_US_U | PG_RW_W | PG_P_1 ;
 
         memset((void*)((int)pte & 0xfffff000) , 0, PG_SIZE);
-         put_str("pde set\n");
+         //put_str("pde set\n");
         *pte =  page_phyaddr | PG_US_U | PG_RW_W | PG_P_1;
     }
 }
@@ -165,19 +165,19 @@ void* malloc_page(enum pool_flags pf, uint32_t pg_cnt){
     
     void* vaddr_start = vaddr_get(pf, pg_cnt);
     if(vaddr_start == NULL) return NULL;
-    put_str("\n malloc_page...");
+    //put_str("\n malloc_page...");
     
     uint32_t vaddr = (uint32_t)vaddr_start, cnt = pg_cnt;
-   put_str("v address:");
-    put_int(vaddr);
-    put_char('\n');
+   //put_str("v address:");
+   // put_int(vaddr);
+   // put_char('\n');
     struct pool* mem_pool = pf & PF_KERNEL ? &kernel_pool : &usr_pool;
 
     while(cnt-- > 0){
         void* page_phyaddr = palloc(mem_pool);
 
         if(page_phyaddr == NULL){
-            put_str("\n malloc_page null...");
+           // put_str("\n malloc_page null...");
             return NULL;
         }
 

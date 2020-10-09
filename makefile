@@ -7,7 +7,7 @@ LIB = -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/
 ASFLAGS = -f elf
 CFLAGS = -Wall $(LIB) -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes 
 LDFLAGS = -no-pie -Ttext $(ENTRY_POINT) -e main -Map $(BUILD_DIR)/kernel.map
-OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o  $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o $(BUILD_DIR)/string.o
+OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/thread.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o $(BUILD_DIR)/string.o
 
 
  #$(BUILD_DIR)/debug.o
@@ -38,6 +38,9 @@ $(BUILD_DIR)/memory.o: kernel/memory.c kernel/memory.h lib/kernel/print.h lib/st
 	$(CC) $(CFLAGS) $< -o $@
 #	$(CC) $(CFLAGS) $< -o $@
 
+$(BUILD_DIR)/thread.o: kernel/thread.c kernel/thread.h kernel/memory.h lib/kernel/print.h lib/stdint.h lib/kernel/bitmap.h lib/string.h
+	$(CC) $(CFLAGS) $< -o $@
+
 # 编译loader和mbr
 $(BUILD_DIR)/mbr.bin: mbr.S
 	$(AS) $(ASIB) $< -o $@
@@ -66,7 +69,7 @@ clean:
 	cd $(BUILD_DIR) && rm -f ./*
 
 
-gccjob: $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/string.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o
+gccjob: $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/string.o $(BUILD_DIR)/thread.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o
 
 nasmjob:$(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o
 

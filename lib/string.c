@@ -38,9 +38,9 @@ int memcmp(const void* a,const void*b,uint32_t size ){
 }
 
 char* strcpy(char* dst,const char* src){
-    if(dst != NULL || src != NULL){
+    if(dst != NULL && src != NULL){
         char* tmp = dst;
-        while((*src++ != *dst++) != '\n' );
+        while ((*dst++ = *src++));
         return tmp;
     }
 }
