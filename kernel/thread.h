@@ -2,13 +2,12 @@
 # define _THREAD_H
 
 # include "stdint.h"
-//# include "list.h"
+# include "list.h"
 
 /**
  * 自定义通用函数类型.
  */ 
 typedef void thread_func(void*);
-
 /**
  * 线程状态.
  */ 
@@ -72,14 +71,14 @@ struct task_struct {
     uint8_t priority;
     char name[16];
     // 当前线程可以占用的CPU嘀嗒数
-    //uint8_t ticks;
+    uint8_t ticks;
     // 此任务占用的总嘀嗒数
-    //uint32_t elaspsed_ticks;
+    uint32_t elapsed_ticks;
     // 可执行队列节点
-    //struct list_elem general_tag;
+    struct list_elem general_tag;
     // 所有不可运行线程队列节点
-    //struct list_elem all_list_tag;
-    //uint32_t* pgdir;
+    struct list_elem all_list_tag;
+    uint32_t* pgdir;
     uint32_t stack_magic;
 };
 
@@ -89,5 +88,6 @@ void init_thread(struct task_struct* pthread, char* name, int prio);
 struct task_struct* thread_start(char* name, int prio, thread_func function, void* func_arg);
 void schedule();
 void thread_init();
-
+void thread_block(enum task_status stat);
+void thread_unblock(struct task_struct* pthread);
 # endif

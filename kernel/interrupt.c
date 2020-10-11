@@ -30,10 +30,26 @@ char* intr_name[IDT_DESC_CNT];
 //通用函数中断处理函数
 static void general_init_handler(uint8_t vec_num){
     if(vec_num == 0x27 || vec_num == 0x2f) {return;}
-    put_str("int vector:");
-    put_int(vec_num);
-    put_char('\n');
-}
+    set_cursor(0);
+    int cursor_pos = 0;
+    while(cursor_pos < 320) {
+        put_char(' ');
+        cursor_pos++;
+   }
+   set_cursor(0);	 // 重置光标为屏幕左上角
+   put_str("!!!!!!!      excetion message begin  !!!!!!!!\n");
+   set_cursor(88);	// 从第2行第8个字符开始打印
+   put_str(intr_name[vec_num]);
+   if (vec_num == 14) {	  // 若为Pagefault,将缺失的地址打印出来并悬停
+      int page_fault_vaddr = 0; 
+      asm ("movl %%cr2, %0" : "=r" (page_fault_vaddr));	  // cr2是存放造成page_fault的地址
+      put_str("\npage fault addr is ");put_int(page_fault_vaddr); 
+   }
+   put_str("\n!!!!!!!      excetion message end    !!!!!!!!\n");
+  // 能进入中断处理程序就表示已经处在关中断情况下,
+  // 不会出现调度进程的情况。故下面的死循环不会再被中断。
+   while(1);
+    }
 
 //完成一般中断处理函数注册及异常名称注册
 static void exception_init(void){
@@ -167,4 +183,7 @@ enum intr_status intr_set_status(enum intr_status status){
     return status & INTR_ON ? intr_enable():intr_disable();
 }
 
-
+void register_handler(uint8_t vec_num, void* function){
+    
+    idt_table[vec_num] = function;
+}

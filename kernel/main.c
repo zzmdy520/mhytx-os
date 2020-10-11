@@ -2,21 +2,14 @@
 #include "init.h"
 #include "memory.h"
 #include "thread.h"
+#include "interrupt.h"
+# include "console.h"
 
 void k_thread_test(void *arg);
+void k_thread_test2(void *arg);
 
 int main(void){
-put_char('k');
-put_char('e');
-put_char('r');
-put_char('n');
-put_char('e');
-put_char('l');
-put_char('v');
-put_char('1');
-put_char('.');
-put_char('0');
-put_char('\n');
+put_str("kernel v1.0 \n");
 //put_str("put_str done v5!\n");
 //put_char('\n');
 //put_int(0xabcd1234);
@@ -33,15 +26,26 @@ put_char('\n');
 //put_char('\n');
 
 thread_start("k_thread_test", 31, k_thread_test, "thread_test");
-asm volatile("hlt");
-//while(1);
+thread_start("k_thread_test2", 8, k_thread_test2, "thread_test2");
+intr_enable();
+//asm volatile("hlt");
+while(1){
+    console_put_str("main  ");
+};
+
 return 0;
 }
 
 void k_thread_test(void *arg){
     char* para = arg;
-    put_str("hello\n");
     while(1){
-        put_str(para);
+        console_put_str(para);
+    }
+       }
+
+void k_thread_test2(void *arg){
+    char* para = arg;
+    while(1){
+       console_put_str(para);
     }
        }
