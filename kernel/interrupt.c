@@ -5,7 +5,7 @@
 #include "interrupt.h"
 
 
-#define IDT_DESC_CNT 0X21 //目前支持的中断数
+#define IDT_DESC_CNT 0X30 //目前支持的中断数
 #define PIC_M_CTRL 0X20
 #define PIC_M_DATA 0X21
 #define PIC_S_CTRL 0Xa0
@@ -113,8 +113,11 @@ static void pic_init(void) {
     outb(PIC_S_DATA,0X02);
     outb(PIC_S_DATA,0X01);
     //只打开中钟同步中断
-    outb(PIC_M_DATA,0Xfe);
-    outb(PIC_S_DATA,0Xff);
+    //outb(PIC_M_DATA,0Xfe);
+    //outb(PIC_S_DATA,0Xff);
+    //只打开键盘中断
+    outb(PIC_M_DATA,0xfd);
+    outb(PIC_S_DATA,0xff);
 
     put_str("pic_init done!\n");
 

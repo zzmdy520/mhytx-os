@@ -25,12 +25,12 @@ put_char('\n');
 //put_int((uint32_t)addr);
 //put_char('\n');
 
-thread_start("k_thread_test", 31, k_thread_test, "thread_test");
-thread_start("k_thread_test2", 8, k_thread_test2, "thread_test2");
+//thread_start("k_thread_test", 31, k_thread_test, "thread_test");
+//thread_start("k_thread_test2", 8, k_thread_test2, "thread_test2");
 intr_enable();
 //asm volatile("hlt");
 while(1){
-    console_put_str("main  ");
+    //console_put_str("main  ");
 };
 
 return 0;

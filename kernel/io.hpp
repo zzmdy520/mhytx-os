@@ -10,13 +10,13 @@ static inline void outsw(uint16_t port,const void* addr,uint32_t word_cnt){
     asm volatile("cld;rep outsw" : "+S" (addr), "+c" (word_cnt):"d" (port));
 }
 
-static inline uint8_t intb(uint16_t port){
+static inline uint8_t inb(uint16_t port){
     uint8_t data;
     asm volatile( "inb %w1, %b0" : "=a" (data) : "Nd" (port) );
     return data;
 }
 
-static inline void intsw(uint16_t port, void* addr,uint32_t word_cnt){
+static inline void insw(uint16_t port, void* addr,uint32_t word_cnt){
     asm volatile("cld; rep intsw" : "+D"(addr),"+c" (word_cnt) :"d" (port) : "memory");
 }
 

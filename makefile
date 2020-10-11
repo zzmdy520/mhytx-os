@@ -8,7 +8,7 @@ ASFLAGS = -f elf
 CFLAGS = -Wall $(LIB) -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes 
 LDFLAGS = -no-pie -Ttext $(ENTRY_POINT) -e main -Map $(BUILD_DIR)/kernel.map
 
-OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/console.o $(BUILD_DIR)/sync.o $(BUILD_DIR)/list.o $(BUILD_DIR)/switch.o  $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/thread.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o $(BUILD_DIR)/string.o 
+OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/keyboard.o $(BUILD_DIR)/init.o $(BUILD_DIR)/console.o $(BUILD_DIR)/sync.o $(BUILD_DIR)/list.o $(BUILD_DIR)/switch.o  $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/thread.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o $(BUILD_DIR)/string.o 
  #$(BUILD_DIR)/debug.o
 
 
@@ -19,7 +19,7 @@ OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/console.o $(BUILD_DI
 $(BUILD_DIR)/main.o: kernel/main.c lib/kernel/print.h lib/stdint.h kernel/init.h
 	$(CC) $(CFLAGS) $< -o $@
 
-$(BUILD_DIR)/init.o: kernel/init.c kernel/init.h lib/kernel/print.h lib/stdint.h kernel/interrupt.h device/timer.h
+$(BUILD_DIR)/init.o: kernel/init.c kernel/init.h lib/kernel/print.h lib/stdint.h kernel/interrupt.h device/timer.h device/keyboard.h
 	$(CC) $(CFLAGS) $< -o $@
 
 $(BUILD_DIR)/interrupt.o: kernel/interrupt.c kernel/interrupt.h lib/stdint.h kernel/global.h kernel/io.hpp lib/kernel/print.h
@@ -50,6 +50,9 @@ $(BUILD_DIR)/console.o: device/console.c device/console.h kernel/thread.c lib/ke
 
 
 $(BUILD_DIR)/sync.o: kernel/sync.c kernel/sync.h  lib/kernel/list.h kernel/interrupt.h kernel/global.h kernel/thread.h
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD_DIR)/keyboard.o: device/keyboard.c device/keyboard.h lib/kernel/print.h  kernel/interrupt.h kernel/io.hpp kernel/global.h   
 	$(CC) $(CFLAGS) $< -o $@
 
 
@@ -84,7 +87,7 @@ clean:
 	cd $(BUILD_DIR) && rm -f ./*
 
 
-gccjob: $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o  $(BUILD_DIR)/list.o  $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/string.o $(BUILD_DIR)/thread.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/sync.o $(BUILD_DIR)/console.o
+gccjob: $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o  $(BUILD_DIR)/list.o  $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/string.o $(BUILD_DIR)/thread.o $(BUILD_DIR)/memory.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/sync.o $(BUILD_DIR)/console.o $(BUILD_DIR)/keyboard.o
 
 nasmjob:$(BUILD_DIR)/kernel.o $(BUILD_DIR)/print.o $(BUILD_DIR)/switch.o
 
